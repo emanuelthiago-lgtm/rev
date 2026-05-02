@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Revolução do Foco</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #002B6B;
+    --navy-deep: #001A45;
+    --navy-mid: #003087;
+    --cyan: #00D4C8;
+    --cyan-soft: rgba(0,212,200,0.15);
+    --white: #FFFFFF;
+    --white-muted: rgba(255,255,255,0.65);
+    --white-dim: rgba(255,255,255,0.35);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--navy-deep);
+    color: var(--white);
+    font-family: 'Inter', sans-serif;
+    height: 100vh;
+    overflow: hidden;
+    position: relative;
+    cursor: default;
+  }
+
+  /* Radial glow background - Contabilizei style */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 25% 50%, #003FA3 0%, transparent 65%),
+      radial-gradient(ellipse 60% 50% at 75% 40%, #002B6B 0%, transparent 70%),
+      radial-gradient(ellipse 40% 40% at 50% 100%, rgba(0,212,200,0.08) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  /* Subtle dot grid */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: radial-gradient(rgba(255,255,255,0.06) 1px, transparent 1px);
+    background-size: 32px 32px;
+    pointer-events: none;
+  }
+
+  /* CLICK TO START OVERLAY */
+  #start-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,26,69,0.92);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    cursor: pointer;
+    backdrop-filter: blur(4px);
+    transition: opacity 0.6s ease;
+  }
+
+  #start-overlay .start-icon {
+    width: 80px;
+    height: 80px;
+    border: 2px solid var(--cyan);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: pulse 2s infinite;
+  }
+
+  #start-overlay .start-icon svg {
+    width: 32px;
+    height: 32px;
+    fill: var(--cyan);
+    margin-left: 6px;
+  }
+
+  #start-overlay p {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--white);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  #start-overlay small {
+    font-size: 13px;
+    color: var(--white-muted);
+    letter-spacing: 1px;
+  }
+
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(0,212,200,0.4); }
+    50% { box-shadow: 0 0 0 16px rgba(0,212,200,0); }
+  }
+
+  /* MAIN LAYOUT */
+  .container {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    height: 100vh;
+  }
+
+  .divider {
+    position: fixed;
+    left: 50%;
+    top: 4%;
+    height: 92%;
+    width: 1px;
+    background: linear-gradient(to bottom, transparent, rgba(0,212,200,0.3) 20%, rgba(0,212,200,0.3) 80%, transparent);
+    z-index: 2;
+  }
+
+  /* ── LEFT COLUMN ── */
+  .left {
+    padding: 48px 48px 48px 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    animation: fadeInLeft 1s ease 0.8s both;
+  }
+
+  .eyebrow {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 5px;
+    color: var(--cyan);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .left-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 48px;
+    font-weight: 900;
+    line-height: 1.05;
+    color: var(--white);
+    margin-bottom: 36px;
+  }
+
+  .left-title span {
+    color: var(--cyan);
+  }
+
+  .questions-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .questions-list li {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    animation: fadeInLeft 0.7s ease both;
+  }
+
+  .questions-list li:last-child {
+    border-bottom: none;
+    padding-top: 24px;
+    margin-top: 6px;
+  }
+
+  .q-text {
+    font-size: 17px;
+    font-weight: 400;
+    color: var(--white-muted);
+    line-height: 1.35;
+  }
+
+  .q-answer {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--cyan);
+    white-space: nowrap;
+    letter-spacing: 1px;
+  }
+
+  .q-final {
+    width: 100%;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--white);
+    text-align: center;
+    border-top: 1px solid rgba(0,212,200,0.3) !important;
+    padding-top: 22px !important;
+  }
+
+  .q-final-mark {
+    color: var(--cyan);
+  }
+
+  /* ── RIGHT COLUMN ── */
+  .right {
+    padding: 48px 60px 48px 48px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 14px;
+    animation: fadeInRight 1s ease 0.8s both;
+    overflow-y: auto;
+    padding-top: 36px;
+    padding-bottom: 36px;
+  }
+
+  .right-eyebrow {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 5px;
+    color: var(--cyan);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .quote-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-left: 3px solid rgba(0,212,200,0.4);
+    border-radius: 8px;
+    padding: 16px 20px;
+    transition: border-left-color 0.3s, background 0.3s;
+    animation: fadeInRight 0.7s ease both;
+  }
+
+  .quote-card:hover {
+    border-left-color: var(--cyan);
+    background: rgba(0,212,200,0.06);
+  }
+
+  .quote-author {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--white);
+    letter-spacing: 0.5px;
+  }
+
+  .quote-company {
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--cyan);
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    opacity: 0.8;
+  }
+
+  .quote-text {
+    font-size: 19px;
+    font-weight: 300;
+    line-height: 1.55;
+    color: var(--white-muted);
+    font-style: italic;
+  }
+
+  /* MUSIC BAR */
+  .music-bar {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    z-index: 10;
+    background: rgba(0,26,69,0.85);
+    border: 1px solid rgba(0,212,200,0.25);
+    padding: 10px 22px;
+    border-radius: 40px;
+    backdrop-filter: blur(12px);
+    cursor: pointer;
+    transition: border-color 0.3s;
+  }
+
+  .music-bar:hover { border-color: rgba(0,212,200,0.6); }
+
+  .music-label {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: var(--white-muted);
+    text-transform: uppercase;
+  }
+
+  .bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 3px;
+    height: 16px;
+  }
+
+  .bar {
+    width: 3px;
+    background: var(--cyan);
+    border-radius: 2px;
+    animation: bounce 1.2s ease infinite;
+  }
+
+  .bar:nth-child(1) { height: 6px;  animation-delay: 0s; }
+  .bar:nth-child(2) { height: 14px; animation-delay: 0.2s; }
+  .bar:nth-child(3) { height: 9px;  animation-delay: 0.4s; }
+  .bar:nth-child(4) { height: 16px; animation-delay: 0.1s; }
+  .bar:nth-child(5) { height: 6px;  animation-delay: 0.3s; }
+
+  .bars.paused .bar { animation-play-state: paused; height: 4px !important; }
+
+  @keyframes bounce {
+    0%, 100% { transform: scaleY(0.3); }
+    50% { transform: scaleY(1); }
+  }
+
+  @keyframes fadeInLeft {
+    from { opacity: 0; transform: translateX(-24px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  @keyframes fadeInRight {
+    from { opacity: 0; transform: translateX(24px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  /* Stagger */
+  .questions-list li:nth-child(1) { animation-delay: 1.0s; }
+  .questions-list li:nth-child(2) { animation-delay: 1.15s; }
+  .questions-list li:nth-child(3) { animation-delay: 1.3s; }
+  .questions-list li:nth-child(4) { animation-delay: 1.45s; }
+  .questions-list li:nth-child(5) { animation-delay: 1.6s; }
+  .questions-list li:nth-child(6) { animation-delay: 1.75s; }
+  .questions-list li:nth-child(7) { animation-delay: 1.9s; }
+  .questions-list li:nth-child(8) { animation-delay: 2.05s; }
+
+  .quote-card:nth-child(1) { animation-delay: 1.0s; }
+  .quote-card:nth-child(2) { animation-delay: 1.2s; }
+  .quote-card:nth-child(3) { animation-delay: 1.4s; }
+  .quote-card:nth-child(4) { animation-delay: 1.6s; }
+  .quote-card:nth-child(5) { animation-delay: 1.8s; }
+  .quote-card:nth-child(6) { animation-delay: 2.0s; }
+</style>
+</head>
+<body>
+
+<audio id="bg-music" loop>
+  <source src="1988MireilleMathieuLaMarseillaise_512kb.mp4" type="video/mp4">
+</audio>
+
+<!-- Click to start overlay (needed for browser autoplay policy) -->
+<div id="start-overlay" onclick="startExperience()">
+  <div class="start-icon">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8 5v14l11-7z"/></svg>
+  </div>
+  <p>Iniciar Apresentação</p>
+  <small>La Marseillaise · Mireille Mathieu</small>
+</div>
+
+<div class="divider"></div>
+
+<div class="container">
+
+  <!-- LEFT COLUMN -->
+  <div class="left">
+    <div class="eyebrow">Análise Estratégica</div>
+    <h1 class="left-title">Onde estamos<br><span>invencíveis?</span></h1>
+
+    <ul class="questions-list">
+      <li>
+        <span class="q-text">Em qual profissão temos maior Market Share?</span>
+        <span class="q-answer">TI / DEV</span>
+      </li>
+      <li>
+        <span class="q-text">Em qual profissão temos melhor NPS?</span>
+        <span class="q-answer">TI / DEV</span>
+      </li>
+      <li>
+        <span class="q-text">Em qual profissão temos melhor Gross Margin?</span>
+        <span class="q-answer">TI / DEV</span>
+      </li>
+      <li>
+        <span class="q-text">Em qual profissão temos maior escala?</span>
+        <span class="q-answer">TI / DEV</span>
+      </li>
+      <li>
+        <span class="q-text">Em qual profissão temos maior perfil Tech Savvy que prefere contabilidade online?</span>
+        <span class="q-answer">TI / DEV</span>
+      </li>
+      <li>
+        <span class="q-text">Em qual profissão temos maior vantagem competitiva?</span>
+        <span class="q-answer">TI / DEV</span>
+      </li>
+      <li>
+        <span class="q-text">Em qual profissão podemos criar um monopólio com altas barreiras de entrada?</span>
+        <span class="q-answer">TI / DEV</span>
+      </li>
+      <li>
+        <span class="q-final">Por que focar em Tradicional então<span class="q-final-mark">?</span></span>
+      </li>
+    </ul>
+  </div>
+
+  <!-- RIGHT COLUMN -->
+  <div class="right">
+    <div class="right-eyebrow">O que os melhores sabem</div>
+
+    <div class="quote-card">
+      <div class="quote-author">Peter Thiel</div>
+      <div class="quote-company">PayPal · Palantir</div>
+      <div class="quote-text">Competição é para quem não tem monopólio. Se você tem vantagem que ninguém pode copiar, a estratégia é aprofundar — não diversificar.</div>
+    </div>
+
+    <div class="quote-card">
+      <div class="quote-author">Warren Buffett</div>
+      <div class="quote-company">Berkshire Hathaway</div>
+      <div class="quote-text">Quando você está ganhando, aumente a aposta. A diversificação é proteção contra ignorância — não faz sentido para quem sabe exatamente o que está fazendo.</div>
+    </div>
+
+    <div class="quote-card">
+      <div class="quote-author">Jeff Bezos</div>
+      <div class="quote-company">Amazon</div>
+      <div class="quote-text">Seu market share é a prova de que o mercado te escolheu. A pergunta não é "onde mais podemos ir?" — é "por que não somos maiores aqui?"</div>
+    </div>
+
+    <div class="quote-card">
+      <div class="quote-author">Bill Gates</div>
+      <div class="quote-company">Microsoft</div>
+      <div class="quote-text">Nossa vantagem não era ser o melhor em tudo. Era ser impossível de substituir em algo.</div>
+    </div>
+
+    <div class="quote-card">
+      <div class="quote-author">Sam Walton</div>
+      <div class="quote-company">Walmart</div>
+      <div class="quote-text">Não me importava o tamanho do mercado que eu escolhi. Me importava ser invencível nele.</div>
+    </div>
+
+    <div class="quote-card">
+      <div class="quote-author">Paul Graham</div>
+      <div class="quote-company">Y Combinator</div>
+      <div class="quote-text">Encantar profundamente poucos é mais valioso do que agradar superficialmente muitos.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Music bar -->
+<div class="music-bar" onclick="toggleMusic()" id="music-btn">
+  <div class="bars paused" id="bars">
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+  </div>
+  <span class="music-label" id="music-label">La Marseillaise · Mireille Mathieu</span>
+</div>
+
+<script>
+  const audio = document.getElementById('bg-music');
+  const overlay = document.getElementById('start-overlay');
+  const bars = document.getElementById('bars');
+  const label = document.getElementById('music-label');
+  let playing = false;
+
+  audio.volume = 0.4;
+
+  function startExperience() {
+    overlay.style.opacity = '0';
+    overlay.style.pointerEvents = 'none';
+    setTimeout(() => overlay.style.display = 'none', 600);
+    audio.play().then(() => {
+      playing = true;
+      bars.classList.remove('paused');
+    });
+  }
+
+  function toggleMusic() {
+    if (playing) {
+      audio.pause();
+      bars.classList.add('paused');
+      label.textContent = '❚❚  La Marseillaise · Pausado';
+      playing = false;
+    } else {
+      audio.play().then(() => {
+        bars.classList.remove('paused');
+        label.textContent = 'La Marseillaise · Mireille Mathieu';
+        playing = true;
+      });
+    }
+  }
+</script>
+
+</body>
+</html>
